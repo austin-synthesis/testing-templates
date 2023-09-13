@@ -1,10 +1,10 @@
 client:
-  name: ${{ values.parameters.clientName }}
-  environment: ${{ values.parameters.environment }}
+  name: ${{ values.clientName }}
+  environment: ${{ values.environment }}
   account:
-    name: ${{ values.parameters.accountName }}
-    id: ${{ values.parameters.accountId }}
-    region: ${{ values.parameters.accountRegion }}
+    name: ${{ values.accountName }}
+    id: ${{ values.accountId }}
+    region: ${{ values.accountRegion }}
     modules:
       s3: false
       opsgenie: false
@@ -20,61 +20,61 @@ client:
       security: false
   opsgenie:
     routing: false
-    version: ${{ values.parameters.opsgenie.version }}
+    version: ${{ values.opsgenie.version }}
     schedules:
       cloudops: false
       ateam: false
       avengers: false
   backup:
-    retention_days_daily: ${{ values.parameters.backup.retention_days_daily }}
-    retention_days_weekly: ${{ values.parameters.backup.retention_days_weekly }}
-    retention_days_monthly: ${{ values.parameters.backup.retention_days_monthly }}
-    cron_schedule_daily: ${{ values.parameters.backup.cron_schedule_daily }}
-    cron_schedule_weekly: ${{ values.parameters.backup.cron_schedule_weekly }}
-    cron_schedule_monthly: ${{ values.parameters.backup.cron_schedule_monthly }}
-    create_daily: ${{ values.parameters.backup.create_daily }}
-    create_weekly: ${{ values.parameters.backup.create_weekly }}
-    create_monthly: ${{ values.parameters.backup.create_monthly }}
-    version: ${{ values.parameters.backup.version }}
+    retention_days_daily: ${{ values.backup.retention_days_daily }}
+    retention_days_weekly: ${{ values.backup.retention_days_weekly }}
+    retention_days_monthly: ${{ values.backup.retention_days_monthly }}
+    cron_schedule_daily: ${{ values.backup.cron_schedule_daily }}
+    cron_schedule_weekly: ${{ values.backup.cron_schedule_weekly }}
+    cron_schedule_monthly: ${{ values.backup.cron_schedule_monthly }}
+    create_daily: ${{ values.backup.create_daily }}
+    create_weekly: ${{ values.backup.create_weekly }}
+    create_monthly: ${{ values.backup.create_monthly }}
+    version: ${{ values.backup.version }}
   tagging:
-    version: ${{ values.parameters.tagging.version }}
+    version: ${{ values.tagging.version }}
   health_check:
     monitored_accounts:
-      - ${{ values.parameters.health_check.monitored_accounts }}
-    sns_ops_api_key: ${{ values.parameters.health_check.sns_ops_api_key }}
-    version: ${{ values.parameters.health_check.version }}
+      - ${{ values.health_check.monitored_accounts }}
+    sns_ops_api_key: ${{ values.health_check.sns_ops_api_key }}
+    version: ${{ values.health_check.version }}
   cost:
-    sns_ops_api_key: ${{ values.parameters.cost.sns_ops_api_key }}
-    version: ${{ values.parameters.cost.version }}
+    sns_ops_api_key: ${{ values.cost.sns_ops_api_key }}
+    version: ${{ values.cost.version }}
   patching_ssm:
-    scan_schedule: ${{ values.parameters.patching_ssm.scan_schedule }}
-    critical_install_schedule: ${{ values.parameters.patching_ssm.critical_install_schedule }}
-    non_critical_install_schedule: ${{ values.parameters.patching_ssm.non_critical_install_schedule }}
-    operating_system: ${{ values.parameters.patching_ssm.operating_system }}
-    version: ${{ values.parameters.patching_ssm.version }}
+    scan_schedule: ${{ values.patching_ssm.scan_schedule }}
+    critical_install_schedule: ${{ values.patching_ssm.critical_install_schedule }}
+    non_critical_install_schedule: ${{ values.patching_ssm.non_critical_install_schedule }}
+    operating_system: ${{ values.patching_ssm.operating_system }}
+    version: ${{ values.patching_ssm.version }}
   patching_management:
-    shared_services_account_id: ${{ values.parameters.patching_management.shared_services_account_id }}
-    management_vpc_id: ${{ values.parameters.patching_management.management_vpc_id }}
+    shared_services_account_id: ${{ values.patching_management.shared_services_account_id }}
+    management_vpc_id: ${{ values.patching_management.management_vpc_id }}
     management_subnet_ids:
-      - ${{ values.parameters.patching_management.management_subnet_ids }}
-    patch_manager_schedule: ${{ values.parameters.patching_management.patch_manager_schedule }}
+      - ${{ values.patching_management.management_subnet_ids }}
+    patch_manager_schedule: ${{ values.patching_management.patch_manager_schedule }}
     account_list:
-      - ${{ values.parameters.patching_management.account_list }}
+      - ${{ values.patching_management.account_list }}
     lambda_execution_role_list:
-      - ${{ values.parameters.patching_management.lambda_execution_role_list }}
-    max_concurrency: ${{ values.parameters.patching_management.max_concurrency }}
-    max_error: ${{ values.parameters.patching_management.max_error }}
-    version: ${{ values.parameters.patching_management.version }}
+      - ${{ values.patching_management.lambda_execution_role_list }}
+    max_concurrency: ${{ values.patching_management.max_concurrency }}
+    max_error: ${{ values.patching_management.max_error }}
+    version: ${{ values.patching_management.version }}
   patching_target:
-    target_account_id: ${{ values.parameters.patching_target.target_account_id }}
-    shared_services_account_id: ${{ values.parameters.patching_target.shared_services_account_id }}
-    target_vpc_id: ${{ values.parameters.patching_target.target_vpc_id }}
+    target_account_id: ${{ values.patching_target.target_account_id }}
+    shared_services_account_id: ${{ values.patching_target.shared_services_account_id }}
+    target_vpc_id: ${{ values.patching_target.target_vpc_id }}
     target_subnet_ids:
-      - ${{ values.parameters.patching_target.target_subnet_ids }}
-    cleanup_schedule: ${{ values.parameters.patching_target.cleanup_schedule }}
-    version: ${{ values.parameters.patching_target.version }}
+      - ${{ values.patching_target.target_subnet_ids }}
+    cleanup_schedule: ${{ values.patching_target.cleanup_schedule }}
+    version: ${{ values.patching_target.version }}
   security:
-    audit_account_id: ${{ values.parameters.security.audit_account_id }}
-    subscription_endpoint: ${{ values.parameters.security.subscription_endpoint }}
-    security_hub_region: ${{ values.parameters.security.security_hub_region }}
-    version: ${{ values.parameters.security.version }}
+    audit_account_id: ${{ values.security.audit_account_id }}
+    subscription_endpoint: ${{ values.security.subscription_endpoint }}
+    security_hub_region: ${{ values.security.security_hub_region }}
+    version: ${{ values.security.version }}
