@@ -1,13 +1,13 @@
 client:
-  name: ${{ values.clientName }}
-  environment: ${{ values.environment }}
+  name: ${{ values.client_config.clientName }}
+  environment: ${{ values.client_config.environment }}
   account:
-    name: ${{ values.accountName }}
-    id: ${{ values.accountId }}
-    region: ${{ values.accountRegion }}
+    name: ${{ values.client_config.accountName }}
+    id: ${{ values.client_config.accountId }}
+    region: ${{ values.client_config.accountRegion }}
     modules:
       s3: false
-      opsgenie: false
+      opsgenie: ${{ values.modules.opsgenie }}
       backup: false
       tagging: false
       health_check: false
