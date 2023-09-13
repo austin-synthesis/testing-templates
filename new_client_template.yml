@@ -19,12 +19,10 @@ client:
       patching_target: false
       security: false
   opsgenie:
-    routing: false
-    version: ${{ values.opsgenie.version }}
+    routing: ${{ values.opsgenie_routing }}
+    version: ${{ values.opsgenie_version }}
     schedules:
-      cloudops: false
-      ateam: false
-      avengers: false
+      ${{ values.opsgenie_schedules }}
   backup:
     retention_days_daily: ${{ values.backup.retention_days_daily }}
     retention_days_weekly: ${{ values.backup.retention_days_weekly }}
