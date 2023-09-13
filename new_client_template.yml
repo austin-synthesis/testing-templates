@@ -8,21 +8,21 @@ client:
     modules:
       s3: false
       opsgenie: ${{ values.modules.opsgenie }}
-      backup: false
-      tagging: false
-      health_check: false
-      health_check_serverside: false
-      cost: false
-      cost_serverside: false
-      patching_ssm: false
-      patching_management: false
-      patching_target: false
-      security: false
+      backup: ${{ values.modules.backup }}
+      tagging: ${{ values.modules.tagging }}
+      health_check: ${{ values.modules.health_check }}
+      health_check_serverside: ${{ values.modules.health_check_serverside }}
+      cost: ${{ values.modules.cost }}
+      cost_serverside: ${{ values.modules.cost_serverside }}
+      patching_ssm: ${{ values.modules.patching_ssm }}
+      patching_management: ${{ values.modules.patching_management }}
+      patching_target: ${{ values.modules.patching_target }}
+      security: ${{ values.modules.security }}
   opsgenie:
-    routing: ${{ values.opsgenie_routing }}
-    version: ${{ values.opsgenie_version }}
+    routing: ${{ values.opsgenie.routing }}
+    version: ${{ values.opsgenie.version }}
     schedules:
-      ${{ values.opsgenie_schedules }}
+      ${{ values.opsgenie.schedules }}
   backup:
     retention_days_daily: ${{ values.backup.retention_days_daily }}
     retention_days_weekly: ${{ values.backup.retention_days_weekly }}
