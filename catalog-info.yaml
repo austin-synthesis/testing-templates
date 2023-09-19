@@ -4,5 +4,5 @@ metadata:
   name: transitioning-template
 spec:
   type: service
-  owner: user:austin
+  owner: user:guest
   lifecycle: experimental
