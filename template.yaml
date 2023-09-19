@@ -1,0 +1,574 @@
+---
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: transitioning-tooling-template
+  title: Transitioning Tooling Template
+  description: Scaffolds a new client's transitioning requirements yaml file to be pushed and deployed
+spec:
+  owner: group:platform
+  type: service
+  parameters:  
+    - title: Client Configuration
+      properties:
+        clientName:
+          title: Name
+          type: string
+          description: Unique name of the client
+        environment:
+          title: Environment
+          type: string
+          description: Environment (dev, npr, prd)
+        accountId:
+          title: Account ID
+          type: string
+          description: ID of the account
+        accountName:
+          title: Account Name
+          type: string
+          description: Name of the account
+        accountRegion:
+          title: Account Region
+          type: string
+          description: Region where the account is located
+
+    - title: OpsGenie Configuration
+      #required: []
+      properties:
+        deployOpsgenie:
+          title: Should OpsGenie be deployed?
+          description: Select either true or false
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployOpsgenie:
+          oneOf:
+            - properties:
+                deployOpsgenie:
+                  enum:
+                    - true
+                opsgenie_routing:
+                  title: Enable Routing
+                  type: string
+                  default: 'true'
+                  enum:
+                    - 'true'
+                    - 'false'
+                opsgenie_schedules:
+                  title: Enable Schedules
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - 'Avengers'
+                      - 'A-Team'
+                      - 'CloudOps'
+                  uniqueItems: true
+                  ui:widget: checkboxes 
+                opsgenie_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployOpsgenie:
+                  enum:
+                    - false
+
+    - title: Backup Configuration
+      required: []
+      properties:
+        deployBackup:
+          title: Deploy Backup
+          description: Should the backup module be deployed?          
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployBackup:
+          oneOf:
+            - properties:
+                deployBackup:
+                  enum:
+                    - true
+                backup_daily:
+                  title: Daily Schedule
+                  description: Should the daily schedule be deployed?
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+                  default: false
+                backup_weekly:
+                  title: Weekly Schedule
+                  description: Should the weekly schedule be deployed?
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+                  default: false
+                backup_monthly:
+                  title: Monthly Schedule
+                  description: Should the monthly schedule be deployed?
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+                  default: false                                  
+              # Creating a dependency based on the selected java version (not necessary, just for example)
+              dependencies:
+                backup_daily:
+                  oneOf:
+                    - properties: 
+                        backup_daily:
+                          enum:
+                            - true                            
+                        backup_retention_days_daily:
+                          title: Retention Days (Daily)
+                          type: string
+                          description: Number of days to retain daily backups
+                          default: "2"
+                        backup_cron_schedule_daily:
+                          title: Cron Schedule (Daily)
+                          type: string
+                          description: Cron schedule for daily backups
+                          default: "cron(0 23 ? * * *)"
+                    - properties:
+                        backup_daily:
+                          enum:
+                            - false                           
+                backup_weekly:
+                  oneOf:
+                    - properties: 
+                        backup_weekly:
+                          enum:
+                            - true                            
+                        backup_retention_days_weekly:
+                          title: Retention Days (weekly)
+                          type: string
+                          description: Number of days to retain weekly backups
+                          default: "7"
+                        backup_cron_schedule_weekly:
+                          title: Cron Schedule (weekly)
+                          type: string
+                          description: Cron schedule for weekly backups
+                          default: "cron(0 23 ? * * *)"
+                    - properties:
+                        backup_weekly:
+                          enum:
+                            - false                            
+                backup_monthly:
+                  oneOf:
+                    - properties: 
+                        backup_monthly:
+                          enum:
+                            - true                            
+                        backup_retention_days_monthly:
+                          title: Retention Days (monthly)
+                          type: string
+                          description: Number of days to retain monthly backups
+                          default: "30"
+                        backup_cron_schedule_monthly:
+                          title: Cron Schedule (monthly)
+                          type: string
+                          description: Cron schedule for monthly backups
+                          default: "cron(0 23 ? * * *)"
+                    - properties:
+                        backup_monthly:
+                          enum:
+                            - false                            
+            - properties:
+                deployBackup:
+                  enum:
+                    - false                                                                                            
+
+    - title: Tagging Configuration
+      properties:
+        deployTagging:
+          title: Deploy Tagging
+          description: Should the tagging module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployTagging:
+          oneOf:
+            - properties:
+                deployTagging:
+                  enum:
+                    - true
+                tagging_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployTagging:
+                  enum:
+                    - false
+
+    - title: Health Check Configuration
+      properties:
+        deployHealthCheck:
+          title: Deploy Health Check
+          description: Should the health check module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployHealthCheck:
+          oneOf:
+            - properties:
+                deployHealthCheck:
+                  enum:
+                    - true
+                health_check_monitored_accounts:
+                  title: Monitored Accounts
+                  type: array
+                  items:
+                    type: string
+                  description: List of accounts to monitor for health checks server side
+                health_check_sns_ops_api_key:
+                  title: SNS Ops API Key
+                  type: string
+                  description: Opsgenie needs to be deployed first for this key to be created
+                health_check_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployHealthCheck:
+                  enum:
+                    - false
+
+    - title: Cost Configuration
+      properties:
+        deployCost:
+          title: Deploy Cost
+          description: Should the cost module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployCost:
+          oneOf:
+            - properties:
+                deployCost:
+                  enum:
+                    - true
+                cost_sns_ops_api_key:
+                  title: SNS Ops API Key
+                  type: string
+                  description: Opsgenie needs to be deployed first for this key to be created
+                cost_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployCost:
+                  enum:
+                    - false
+
+    - title: Patching SSM Configuration
+      properties:
+        deployPatchingSSM:
+          title: Deploy Patching SSM
+          description: Should the Patching SSM module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployPatchingSSM:
+          oneOf:
+            - properties:
+                deployPatchingSSM:
+                  enum:
+                    - true
+                patching_ssm_scan_schedule:
+                  title: Scan Schedule
+                  type: string
+                  description: The cron expression for the scan schedule
+                  default: "cron(0 0 ? * MON *)"
+                patching_ssm_critical_install_schedule:
+                  title: Critical Install Schedule
+                  type: string
+                  description: The cron expression for the critical install schedule
+                  default: "cron(0 0 ? * MON *)"
+                patching_ssm_falsen_critical_install_schedule:
+                  title: falsen-Critical Install Schedule
+                  type: string
+                  description: The cron expression for the falsen-critical install schedule
+                  default: "cron(0 0 ? * MON *)"
+                patching_ssm_operating_system:
+                  title: Operating System
+                  type: string
+                  description: The Operating System for the Critical Patch Baseline
+                  default: "AMAZON_LINUX_2"
+                patching_ssm_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployPatchingSSM:
+                  enum:
+                    - false
+
+    - title: Patching Management Configuration
+      properties:
+        deployPatchingManagement:
+          title: Deploy Patching Management
+          description: Should the Patching Management module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployPatchingManagement:
+          oneOf:
+            - properties:
+                deployPatchingManagement:
+                  enum:
+                    - true
+                patching_management_shared_services_account_id:
+                  title: Shared Services Account ID
+                  type: string
+                  description: Shared services account ID for patching management
+                patching_management_management_vpc_id:
+                  title: Management VPC ID
+                  type: string
+                  description: Management VPC ID for patching management
+                patching_management_management_subnet_ids:
+                  title: Management Subnet IDs
+                  type: array
+                  items:
+                    type: string
+                  description: Subnet IDs for patching management
+                patching_management_patch_manager_schedule:
+                  title: Patch Manager Schedule
+                  type: string
+                  description: Patch manager schedule for patching management
+                  default: "cron(0 0 ? * SUN *)"
+                patching_management_account_list:
+                  title: Account List
+                  type: array
+                  items:
+                    type: string
+                  description: List of target accounts
+                patching_management_lambda_execution_role_list:
+                  title: Lambda Execution Role List
+                  type: array
+                  items:
+                    type: string
+                  description: List of accounts to monitor for patching
+                patching_management_max_concurrency:
+                  title: Max Concurrency
+                  type: string
+                  description: Maximum concurrency for patching management
+                  default: "10%"
+                patching_management_max_error:
+                  title: Max Error
+                  type: string
+                  description: Maximum error count for patching management
+                  default: "10%"
+                patching_management_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployPatchingManagement:
+                  enum:
+                    - false
+
+    - title: Patching Target Configuration
+      properties:
+        deployPatchingTarget:
+          title: Deploy Patching Target
+          description: Should the Patching Target module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deployPatchingTarget:
+          oneOf:
+            - properties:
+                deployPatchingTarget:
+                  enum:
+                    - true
+                patching_target_target_account_id:
+                  title: Target Account ID
+                  type: string
+                  description: Target account ID for patching target
+                patching_target_shared_services_account_id:
+                  title: Shared Services Account ID
+                  type: string
+                  description: Shared services account ID for patching target
+                patching_target_target_vpc_id:
+                  title: Target VPC ID
+                  type: string
+                  description: Target VPC ID for patching target
+                patching_target_target_subnet_ids:
+                  title: Target Subnet IDs
+                  type: array
+                  items:
+                    type: string
+                  description: Subnet IDs for patching target
+                patching_target_cleanup_schedule:
+                  title: Cleanup Schedule
+                  type: string
+                  description: Cleanup schedule for patching target
+                  default: "cron(30 23 ? * SAT *)"
+                patching_target_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deployPatchingTarget:
+                  enum:
+                    - false
+
+    - title: Security Configuration
+      properties:
+        deploySecurity:
+          title: Deploy Security
+          description: Should the Security module be deployed?
+          type: boolean
+          enum:
+            - true
+            - false
+          default: false
+      dependencies:
+        deploySecurity:
+          oneOf:
+            - properties:
+                deploySecurity:
+                  enum:
+                    - true
+                security_audit_account_id:
+                  title: Audit Account ID
+                  type: string
+                  description: Audit account ID for security
+                security_subscription_endpoint:
+                  title: Subscription Endpoint
+                  type: string
+                  description: Subscription endpoint for security
+                security_security_hub_region:
+                  title: Security Hub Region
+                  type: string
+                  description: Security Hub region for security
+                security_version:
+                  title: Version
+                  type: string
+                  default: "?ref="
+            - properties:
+                deploySecurity:
+                  enum:
+                    - false
+
+  # here's the steps that are executed in series in the scaffolder backend
+  steps:
+    - id: fetch-base
+      action: fetch:template
+      input:
+        url: https://github.com/austin-synthesis/testing-templates
+        values:
+          client_config:
+            clientName: ${{ parameters.clientName }}
+            environment: ${{ parameters.environment }}
+            accountId: ${{ parameters.accountId }}
+            accountName: ${{ parameters.accountName }}
+            accountRegion: ${{ parameters.accountRegion }}
+          modules:
+            s3: ${{ parameters.deployOpsgenie }}                                 
+            opsgenie: ${{ parameters.deployOpsgenie }}           
+            backup: ${{ parameters.deployBackup }}                 
+            tagging: ${{ parameters.deployTagging }}                
+            health_check: ${{ parameters.deployHealthCheck }}           
+            health_check_serverside: ${{ parameters.deployHealthCheckServerSide }}
+            cost: ${{ parameters.deployCost }}                   
+            cost_serverside: ${{ parameters.deployCostServerSide }}        
+            patching_ssm: ${{ parameters.deployPatchingSSM }}           
+            patching_management: ${{ parameters.deployPatchingManagement }}    
+            patching_target: ${{ parameters.deployPatchingTarget }}        
+            security: ${{ parameters.deploySecurity }}                          
+          # OpsGenie Configuration
+          opsgenie:
+            routing: ${{ parameters.opsgenie_routing }}
+            schedules: ${{ parameters.opsgenie_schedules }}
+            version: ${{ parameters.opsgenie_version }}         
+          # Backup Configuration
+          backup:
+            retention_days_daily: ${{ parameters.backup_retention_days_daily }}
+            retention_days_weekly: ${{ parameters.backup_retention_days_weekly }}
+            retention_days_monthly: ${{ parameters.backup_retention_days_monthly }}
+            cron_schedule_daily: ${{ parameters.backup_cron_schedule_daily }}
+            cron_schedule_weekly: ${{ parameters.backup_cron_schedule_weekly }}
+            cron_schedule_monthly: ${{ parameters.backup_cron_schedule_monthly }}
+            create_daily: ${{ parameters.backup_create_daily }}
+            create_weekly: ${{ parameters.backup_create_weekly }}
+            create_monthly: ${{ parameters.backup_create_monthly }}
+            version: ${{ parameters.backup_version }}
+          # Tagging Configuration
+          tagging:
+            version: ${{ parameters.tagging_version }}
+          # Health Check Configuration
+          health_check:
+            monitored_accounts: ${{ parameters.health_check_monitored_accounts }}
+            sns_ops_api_key: ${{ parameters.health_check_sns_ops_api_key }}
+            version: ${{ parameters.health_check_version }}
+          # Cost Configuration
+          cost:
+            sns_ops_api_key: ${{ parameters.cost_sns_ops_api_key }}
+            version: ${{ parameters.cost_version }}
+          # Patching SSM Configuration
+          patching_ssm:
+            scan_schedule: ${{ parameters.patching_ssm_scan_schedule }}
+            critical_install_schedule: ${{ parameters.patching_ssm_critical_install_schedule }}
+            falsen_critical_install_schedule: ${{ parameters.patching_ssm_falsen_critical_install_schedule }}
+            operating_system: ${{ parameters.patching_ssm_operating_system }}
+            version: ${{ parameters.patching_ssm_version }}
+          # Patching Management Configuration
+          patching_management:
+            shared_services_account_id: ${{ parameters.patching_management_shared_services_account_id }}
+            management_vpc_id: ${{ parameters.patching_management_management_vpc_id }}
+            management_subnet_ids: ${{ parameters.patching_management_management_subnet_ids }}
+            patch_manager_schedule: ${{ parameters.patching_management_patch_manager_schedule }}
+            account_list: ${{ parameters.patching_management_account_list }}
+            lambda_execution_role_list: ${{ parameters.patching_management_lambda_execution_role_list }}
+            max_concurrency: ${{ parameters.patching_management_max_concurrency }}
+            max_error: ${{ parameters.patching_management_max_error }}
+            version: ${{ parameters.patching_management_version }}
+          # Patching Target Configuration
+          patching_target:
+            target_account_id: ${{ parameters.patching_target_target_account_id }}
+            shared_services_account_id: ${{ parameters.patching_target_shared_services_account_id }}
+            target_vpc_id: ${{ parameters.patching_target_target_vpc_id }}
+            target_subnet_ids: ${{ parameters.patching_target_target_subnet_ids }}
+            cleanup_schedule: ${{ parameters.patching_target_cleanup_schedule }}
+            version: ${{ parameters.patching_target_version }}
+          # Security Configuration
+          security:
+            audit_account_id: ${{ parameters.security_audit_account_id }}
+            subscription_endpoint: ${{ parameters.security_subscription_endpoint }}
+            security_hub_region: ${{ parameters.security_security_hub_region }}
+            version: ${{ parameters.security_version }}
+    # This step publishes the contents of the working directory to Github.
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        repoUrl: https://github.com/austin-synthesis/testing-templates
+        token: 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
